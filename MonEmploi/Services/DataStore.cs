@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text.Json;
 using MonEmploi.Models;
 
 namespace MonEmploi.Services;
@@ -16,9 +17,65 @@ public class DataStore
     /// <summary>Déclenché après chaque modification des données.</summary>
     public event EventHandler? DonneesModifiees;
 
+    private static readonly JsonSerializerOptions OptionsJson = new() { WriteIndented = true };
+    private readonly string _cheminFichier = Path.Combine(FileSystem.AppDataDirectory, "monemploi.json");
+
     public DataStore()
     {
+        Charger();
+    }
+
+    // ---------- Persistance ----------
+    private void Charger()
+    {
+        try
+        {
+            if (File.Exists(_cheminFichier))
+            {
+                var donnees = JsonSerializer.Deserialize<DonneesEmploi>(File.ReadAllText(_cheminFichier), OptionsJson);
+                if (donnees is not null)
+                {
+                    donnees.Salles.ForEach(Salles.Add);
+                    donnees.Enseignants.ForEach(Enseignants.Add);
+                    donnees.Groupes.ForEach(Groupes.Add);
+                    donnees.Seances.ForEach(Seances.Add);
+                    return;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Lecture des données impossible : {ex.Message}");
+        }
+
         ChargerDonneesDemo();
+        Sauvegarder();
+    }
+
+    private void Sauvegarder()
+    {
+        try
+        {
+            var donnees = new DonneesEmploi
+            {
+                Salles = Salles.ToList(),
+                Enseignants = Enseignants.ToList(),
+                Groupes = Groupes.ToList(),
+                Seances = Seances.ToList()
+            };
+            File.WriteAllText(_cheminFichier, JsonSerializer.Serialize(donnees, OptionsJson));
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Sauvegarde impossible : {ex.Message}");
+        }
+    }
+
+    /// <summary>Efface tout et recharge le jeu de données de démonstration.</summary>
+    public void ReinitialiserDemo()
+    {
+        ChargerDonneesDemo();
+        Notifier();
     }
 
     // ---------- Recherche ----------
@@ -83,7 +140,11 @@ public class DataStore
         Notifier();
     }
 
-    private void Notifier() => DonneesModifiees?.Invoke(this, EventArgs.Empty);
+    private void Notifier()
+    {
+        Sauvegarder();
+        DonneesModifiees?.Invoke(this, EventArgs.Empty);
+    }
 
     private void ChargerDonneesDemo()
     {
