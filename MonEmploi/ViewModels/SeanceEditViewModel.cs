@@ -27,6 +27,7 @@ public class SeanceEditViewModel : BaseViewModel, IQueryAttributable
         EnregistrerCommand = new Command(async () => await Enregistrer());
         AnnulerCommand = new Command(async () => await Shell.Current.GoToAsync(".."));
         SupprimerCommand = new Command(async () => await Supprimer());
+        SuggererSalleCommand = new Command(async () => await SuggererSalle());
     }
 
     /// <summary>Reçoit l'identifiant de la séance à modifier (route « seance?id=... »).</summary>
@@ -87,6 +88,50 @@ public class SeanceEditViewModel : BaseViewModel, IQueryAttributable
     public bool SansConflit => !AConflits;
     public string Etat { get => _etat; private set => SetProperty(ref _etat, value); }
 
+    /// <summary>Avertissement non bloquant : effectif du groupe supérieur à la capacité de la salle.</summary>
+    public string Avertissement
+    {
+        get
+        {
+            if (GroupeChoisi is null || SalleChoisie is null || GroupeChoisi.Effectif <= SalleChoisie.Capacite)
+                return string.Empty;
+            return $"Capacité insuffisante : {SalleChoisie.Nom} compte {SalleChoisie.Capacite} places pour " +
+                   $"{GroupeChoisi.Effectif} étudiants ({GroupeChoisi.Nom}).";
+        }
+    }
+
+    public bool AAvertissement => !string.IsNullOrEmpty(Avertissement);
+
+    public ICommand SuggererSalleCommand { get; }
+
+    /// <summary>Propose les salles libres sur le créneau et assez grandes pour le groupe.</summary>
+    private async Task SuggererSalle()
+    {
+        if (Fin <= Debut)
+        {
+            await AfficherMessage("Créneau invalide", "Corrigez d'abord les heures de début et de fin.");
+            return;
+        }
+
+        var effectif = GroupeChoisi?.Effectif ?? 0;
+        var libres = _conflits.SallesLibres(ConstruireSeance(), effectif);
+
+        if (libres.Count == 0)
+        {
+            await AfficherMessage("Aucune salle libre",
+                "Aucune salle assez grande n'est disponible sur ce créneau. Essayez un autre horaire.");
+            return;
+        }
+
+        var choix = await Shell.Current.DisplayActionSheet(
+            $"Salles libres ({libres.Count})", "Annuler", null,
+            libres.Select(s => $"{s.Nom} — {s.Capacite} places").ToArray());
+
+        var salle = libres.FirstOrDefault(s => choix == $"{s.Nom} — {s.Capacite} places");
+        if (salle is not null)
+            SalleChoisie = salle;
+    }
+
     public ICommand EnregistrerCommand { get; }
     public ICommand AnnulerCommand { get; }
     public ICommand SupprimerCommand { get; }
@@ -133,6 +178,8 @@ public class SeanceEditViewModel : BaseViewModel, IQueryAttributable
 
         OnPropertyChanged(nameof(AConflits));
         OnPropertyChanged(nameof(SansConflit));
+        OnPropertyChanged(nameof(Avertissement));
+        OnPropertyChanged(nameof(AAvertissement));
     }
 
     private string? Valider()
@@ -161,6 +208,9 @@ public class SeanceEditViewModel : BaseViewModel, IQueryAttributable
             await AfficherMessage("Enregistrement refusé", $"Cette séance entre en conflit :\n• {detail}");
             return;
         }
+
+        if (AAvertissement && !await Confirmer("Capacité insuffisante", $"{Avertissement}\n\nEnregistrer quand même ?"))
+            return;
 
         _store.EnregistrerSeance(ConstruireSeance());
         await Shell.Current.GoToAsync("..");

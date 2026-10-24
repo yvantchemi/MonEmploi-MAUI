@@ -16,8 +16,12 @@
                             ItemDisplayBinding="{Binding NomComplet}" SelectedItem="{Binding EnseignantChoisi}" />
                     <Picker Title="Groupe" ItemsSource="{Binding Groupes}"
                             ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding GroupeChoisi}" />
-                    <Picker Title="Salle" ItemsSource="{Binding Salles}"
-                            ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SalleChoisie}" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Picker Title="Salle" ItemsSource="{Binding Salles}"
+                                ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SalleChoisie}" />
+                        <Button Grid.Column="1" Text="Salle libre ?" Style="{StaticResource BoutonSecondaire}"
+                                Command="{Binding SuggererSalleCommand}" VerticalOptions="Center" />
+                    </Grid>
                 </VerticalStackLayout>
             </Border>
 
@@ -58,6 +62,10 @@
                         </BindableLayout.ItemTemplate>
                     </VerticalStackLayout>
                 </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource Carte}" BackgroundColor="{StaticResource AvertissementClair}" IsVisible="{Binding AAvertissement}">
+                <Label Text="{Binding Avertissement}" TextColor="{StaticResource Avertissement}" FontAttributes="Bold" />
             </Border>
 
             <!-- Actions -->

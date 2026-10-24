@@ -84,6 +84,18 @@ public class ConflictService
         return conflits;
     }
 
+    /// <summary>
+    /// Salles libres sur le créneau de la séance candidate et assez grandes pour l'effectif,
+    /// de la plus petite à la plus grande (on évite de bloquer un amphi pour un petit groupe).
+    /// </summary>
+    public IReadOnlyList<Salle> SallesLibres(Seance candidate, int effectifMinimum)
+        => _store.Salles
+            .Where(salle => salle.Capacite >= effectifMinimum)
+            .Where(salle => !_store.Seances.Any(s =>
+                s.Id != candidate.Id && s.SalleId == salle.Id && s.Chevauche(candidate)))
+            .OrderBy(salle => salle.Capacite)
+            .ToList();
+
     /// <summary>Identifiants de toutes les séances enregistrées impliquées dans au moins un conflit.</summary>
     public HashSet<string> SeancesEnConflit()
     {
