@@ -39,6 +39,27 @@
                 </VerticalStackLayout>
             </Border>
 
+            <!-- Vérification des conflits -->
+            <Border Style="{StaticResource Carte}" BackgroundColor="{StaticResource SuccesClair}" IsVisible="{Binding SansConflit}">
+                <Label Text="{Binding Etat}" TextColor="{StaticResource Succes}" FontAttributes="Bold" />
+            </Border>
+
+            <Border Style="{StaticResource Carte}" BackgroundColor="{StaticResource DangerClair}" IsVisible="{Binding AConflits}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding Etat}" TextColor="{StaticResource Danger}" FontAttributes="Bold" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Conflits}" Spacing="6">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <VerticalStackLayout Spacing="0">
+                                    <Label Text="{Binding Libelle}" FontAttributes="Bold" TextColor="{StaticResource Danger}" FontSize="13" />
+                                    <Label Text="{Binding Message}" FontSize="13" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
             <!-- Actions -->
             <Button Text="Enregistrer la séance" Command="{Binding EnregistrerCommand}" />
             <Button Text="Annuler" Style="{StaticResource BoutonSecondaire}" Command="{Binding AnnulerCommand}" />

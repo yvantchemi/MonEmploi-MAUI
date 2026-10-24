@@ -28,9 +28,13 @@
                 <DataTemplate>
                     <Border Style="{StaticResource Carte}" Margin="0,0,0,8">
                         <Grid ColumnDefinitions="6,*" ColumnSpacing="12">
-                            <BoxView Color="{StaticResource Accent}" CornerRadius="3" />
+                            <BoxView Color="{Binding CouleurStatut}" CornerRadius="3" />
                             <VerticalStackLayout Grid.Column="1" Spacing="2">
-                                <Label Text="{Binding Horaire}" FontAttributes="Bold" TextColor="{StaticResource Primaire}" />
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Horaire}" FontAttributes="Bold" TextColor="{StaticResource Primaire}" />
+                                    <Label Grid.Column="1" Text="⚠ Conflit" FontAttributes="Bold" FontSize="12"
+                                           TextColor="{StaticResource Danger}" IsVisible="{Binding EnConflit}" />
+                                </Grid>
                                 <Label Text="{Binding Matiere}" Style="{StaticResource TitreCarte}" />
                                 <Label Text="{Binding Participants}" Style="{StaticResource TexteDiscret}" />
                                 <Label Text="{Binding Lieu}" Style="{StaticResource TexteDiscret}" />

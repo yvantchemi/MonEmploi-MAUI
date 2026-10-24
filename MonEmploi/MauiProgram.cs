@@ -13,6 +13,7 @@ public static class MauiProgram
 
         // Services
         builder.Services.AddSingleton<DataStore>();
+        builder.Services.AddSingleton<ConflictService>();
 
         // Ressources
         builder.Services.AddSingleton<SallesViewModel>();

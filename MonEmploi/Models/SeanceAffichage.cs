@@ -24,6 +24,9 @@ public class SeanceAffichage
 
     /// <summary>Vrai si la séance est en conflit avec une autre (salle, enseignant ou groupe).</summary>
     public bool EnConflit { get; set; }
+
+    /// <summary>Couleur du repère latéral : rouge en cas de conflit, orange sinon.</summary>
+    public Color CouleurStatut => EnConflit ? Color.FromArgb("#C0392B") : Color.FromArgb("#F2A541");
 }
 
 /// <summary>Regroupement de séances par jour pour les CollectionView groupées.</summary>

@@ -8,11 +8,13 @@ namespace MonEmploi.ViewModels;
 public class SeancesViewModel : BaseViewModel
 {
     private readonly DataStore _store;
+    private readonly ConflictService _conflits;
     private string _resume = string.Empty;
 
-    public SeancesViewModel(DataStore store)
+    public SeancesViewModel(DataStore store, ConflictService conflits)
     {
         _store = store;
+        _conflits = conflits;
         _store.DonneesModifiees += (_, _) => Rafraichir();
 
         NouvelleCommand = new Command(async () => await Shell.Current.GoToAsync("seance"));
@@ -28,12 +30,20 @@ public class SeancesViewModel : BaseViewModel
 
     public void Rafraichir()
     {
-        var affichages = _store.Seances.Select(_store.Decrire).ToList();
+        var enConflit = _conflits.SeancesEnConflit();
+        var affichages = _store.Seances.Select(s =>
+        {
+            var a = _store.Decrire(s);
+            a.EnConflit = enConflit.Contains(s.Id);
+            return a;
+        }).ToList();
 
         SeancesParJour.Clear();
         foreach (var groupe in GroupeJour.Construire(affichages))
             SeancesParJour.Add(groupe);
 
-        Resume = $"{affichages.Count} séance(s) planifiée(s)";
+        Resume = enConflit.Count == 0
+            ? $"{affichages.Count} séance(s) planifiée(s) · aucun conflit"
+            : $"{affichages.Count} séance(s) · {enConflit.Count} en conflit";
     }
 }
