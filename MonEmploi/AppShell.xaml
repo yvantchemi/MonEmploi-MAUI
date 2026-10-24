@@ -9,6 +9,9 @@
         <Tab Title="Séances" Icon="icon_seances.png">
             <ShellContent Title="Séances" Route="seances" ContentTemplate="{DataTemplate views:SeancesPage}" />
         </Tab>
+        <Tab Title="Planning" Icon="icon_planning.png">
+            <ShellContent Title="Planning" Route="planning" ContentTemplate="{DataTemplate views:PlanningPage}" />
+        </Tab>
         <Tab Title="Ressources" Icon="icon_ressources.png">
             <ShellContent Title="Salles" Route="salles" ContentTemplate="{DataTemplate views:SallesPage}" />
             <ShellContent Title="Enseignants" Route="enseignants" ContentTemplate="{DataTemplate views:EnseignantsPage}" />

@@ -29,6 +29,10 @@ public static class MauiProgram
         builder.Services.AddTransient<SeanceEditViewModel>();
         builder.Services.AddTransient<SeanceEditPage>();
 
+        // Vues par enseignant / groupe / salle
+        builder.Services.AddSingleton<PlanningViewModel>();
+        builder.Services.AddSingleton<PlanningPage>();
+
         return builder.Build();
     }
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MonEmploi.ViewModels"
+             x:Class="MonEmploi.Views.PlanningPage"
+             Title="Planning">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,12" RowSpacing="8">
+
+        <!-- Sélection de la vue -->
+        <Border Style="{StaticResource Carte}">
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Afficher l'emploi du temps" Style="{StaticResource TitreCarte}" />
+                <Picker Title="Type de vue" ItemsSource="{Binding Modes}" SelectedIndex="{Binding ModeIndex}" />
+                <Picker Title="{Binding LibelleChoix}" ItemsSource="{Binding Elements}"
+                        ItemDisplayBinding="{Binding Libelle}" SelectedItem="{Binding ElementChoisi}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8" x:Name="BarreActions">
+            <Label Text="{Binding Resume}" Style="{StaticResource TexteDiscret}" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Emploi du temps -->
+        <CollectionView Grid.Row="2" ItemsSource="{Binding SeancesParJour}" IsGrouped="True" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="Aucune séance pour cette sélection." HorizontalOptions="Center" Margin="0,30"
+                       Style="{StaticResource TexteDiscret}" />
+            </CollectionView.EmptyView>
+
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding EnTete}" Style="{StaticResource EnTeteJour}" />
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource Carte}" Margin="0,0,0,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlanningViewModel}}, Path=OuvrirCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="90,*" ColumnSpacing="12">
+                            <VerticalStackLayout VerticalOptions="Center">
+                                <Label Text="{Binding Horaire}" FontAttributes="Bold" TextColor="{StaticResource Primaire}" FontSize="13" />
+                                <Label Text="⚠ Conflit" FontAttributes="Bold" FontSize="12"
+                                       TextColor="{StaticResource Danger}" IsVisible="{Binding EnConflit}" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding Matiere}" Style="{StaticResource TitreCarte}" />
+                                <Label Text="{Binding Participants}" Style="{StaticResource TexteDiscret}" />
+                                <Label Text="{Binding Lieu}" Style="{StaticResource TexteDiscret}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
