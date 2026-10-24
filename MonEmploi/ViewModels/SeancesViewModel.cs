@@ -18,6 +18,11 @@ public class SeancesViewModel : BaseViewModel
         _store.DonneesModifiees += (_, _) => Rafraichir();
 
         NouvelleCommand = new Command(async () => await Shell.Current.GoToAsync("seance"));
+        OuvrirCommand = new Command<SeanceAffichage>(async s =>
+        {
+            if (s is not null)
+                await Shell.Current.GoToAsync($"seance?id={s.Seance.Id}");
+        });
 
         Rafraichir();
     }
@@ -27,6 +32,7 @@ public class SeancesViewModel : BaseViewModel
     public string Resume { get => _resume; private set => SetProperty(ref _resume, value); }
 
     public ICommand NouvelleCommand { get; }
+    public ICommand OuvrirCommand { get; }
 
     public void Rafraichir()
     {

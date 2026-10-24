@@ -63,6 +63,8 @@
             <!-- Actions -->
             <Button Text="Enregistrer la séance" Command="{Binding EnregistrerCommand}" />
             <Button Text="Annuler" Style="{StaticResource BoutonSecondaire}" Command="{Binding AnnulerCommand}" />
+            <Button Text="Supprimer la séance" Style="{StaticResource BoutonDanger}" Command="{Binding SupprimerCommand}"
+                    IsVisible="{Binding EstModification}" />
 
         </VerticalStackLayout>
     </ScrollView>

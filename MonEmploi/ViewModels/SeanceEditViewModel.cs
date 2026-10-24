@@ -5,7 +5,7 @@ using MonEmploi.Services;
 
 namespace MonEmploi.ViewModels;
 
-public class SeanceEditViewModel : BaseViewModel
+public class SeanceEditViewModel : BaseViewModel, IQueryAttributable
 {
     private readonly DataStore _store;
     private readonly ConflictService _conflits;
@@ -26,7 +26,43 @@ public class SeanceEditViewModel : BaseViewModel
         _conflits = conflits;
         EnregistrerCommand = new Command(async () => await Enregistrer());
         AnnulerCommand = new Command(async () => await Shell.Current.GoToAsync(".."));
+        SupprimerCommand = new Command(async () => await Supprimer());
     }
+
+    /// <summary>Reçoit l'identifiant de la séance à modifier (route « seance?id=... »).</summary>
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue("id", out var valeur) && _store.TrouverSeance(valeur?.ToString()) is { } existante)
+        {
+            _seance = existante.Cloner();
+            EstModification = true;
+
+            Matiere = _seance.Matiere;
+            _enseignant = _store.TrouverEnseignant(_seance.EnseignantId);
+            _groupe = _store.TrouverGroupe(_seance.GroupeId);
+            _salle = _store.TrouverSalle(_seance.SalleId);
+            _jourIndex = Jours.Index(_seance.Jour);
+            _debut = _seance.Debut;
+            _fin = _seance.Fin;
+
+            OnPropertyChanged(nameof(EnseignantChoisi));
+            OnPropertyChanged(nameof(GroupeChoisi));
+            OnPropertyChanged(nameof(SalleChoisie));
+            OnPropertyChanged(nameof(JourIndex));
+            OnPropertyChanged(nameof(Debut));
+            OnPropertyChanged(nameof(Fin));
+            Verifier();
+        }
+        else if (query.TryGetValue("jour", out var jour) && int.TryParse(jour?.ToString(), out var index))
+        {
+            JourIndex = index;
+        }
+
+        OnPropertyChanged(nameof(Titre));
+        OnPropertyChanged(nameof(EstModification));
+    }
+
+    public bool EstModification { get; private set; }
 
     // ---------- Listes de choix ----------
     public ObservableCollection<Enseignant> Enseignants => _store.Enseignants;
@@ -34,7 +70,7 @@ public class SeanceEditViewModel : BaseViewModel
     public ObservableCollection<Salle> Salles => _store.Salles;
     public IReadOnlyList<string> JoursNoms => Jours.Noms;
 
-    public string Titre => "Nouvelle séance";
+    public string Titre => EstModification ? "Modifier la séance" : "Nouvelle séance";
 
     // ---------- Champs (chaque modification relance la détection) ----------
     public string Matiere { get => _matiere; set => SetProperty(ref _matiere, value); }
@@ -53,6 +89,16 @@ public class SeanceEditViewModel : BaseViewModel
 
     public ICommand EnregistrerCommand { get; }
     public ICommand AnnulerCommand { get; }
+    public ICommand SupprimerCommand { get; }
+
+    private async Task Supprimer()
+    {
+        if (!EstModification) return;
+        if (!await Confirmer("Supprimer", $"Supprimer la séance « {_seance.Matiere} » ?")) return;
+
+        _store.SupprimerSeance(_seance);
+        await Shell.Current.GoToAsync("..");
+    }
 
     private Seance ConstruireSeance() => new()
     {
