@@ -5,9 +5,18 @@
              x:Class="MonEmploi.Views.SeancesPage"
              Title="Séances">
 
-    <Grid RowDefinitions="Auto,*" Padding="16,12" RowSpacing="6">
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,12" RowSpacing="6">
 
-        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <!-- Recherche et filtre -->
+        <Border Style="{StaticResource Carte}" Padding="8,4">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
+                <SearchBar Placeholder="Matière, enseignant, groupe, salle…" Text="{Binding Recherche}" />
+                <Label Grid.Column="1" Text="Conflits" VerticalOptions="Center" Style="{StaticResource TexteDiscret}" />
+                <Switch Grid.Column="2" IsToggled="{Binding ConflitsSeulement}" OnColor="{StaticResource Danger}" VerticalOptions="Center" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
             <VerticalStackLayout VerticalOptions="Center">
                 <Label Text="{Binding Resume}" Style="{StaticResource TexteDiscret}" />
                 <Label Text="Touchez une séance pour la modifier" Style="{StaticResource TexteDiscret}" FontSize="12" />
@@ -15,7 +24,7 @@
             <Button Grid.Column="1" Text="+ Nouvelle séance" Command="{Binding NouvelleCommand}" />
         </Grid>
 
-        <CollectionView x:Name="ListeSeances" Grid.Row="1" ItemsSource="{Binding SeancesParJour}" IsGrouped="True"
+        <CollectionView x:Name="ListeSeances" Grid.Row="2" ItemsSource="{Binding SeancesParJour}" IsGrouped="True"
                         SelectionMode="None">
             <CollectionView.EmptyView>
                 <Label Text="Aucune séance. Ajoutez la première avec « + Nouvelle séance »."
