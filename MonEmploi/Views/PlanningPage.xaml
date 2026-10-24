@@ -19,6 +19,7 @@
 
         <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8" x:Name="BarreActions">
             <Label Text="{Binding Resume}" Style="{StaticResource TexteDiscret}" VerticalOptions="Center" />
+            <Button Grid.Column="1" Text="Exporter" Style="{StaticResource BoutonSecondaire}" Command="{Binding ExporterCommand}" />
         </Grid>
 
         <!-- Emploi du temps -->

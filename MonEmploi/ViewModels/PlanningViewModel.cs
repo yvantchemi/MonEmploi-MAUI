@@ -10,15 +10,18 @@ public class PlanningViewModel : BaseViewModel
 {
     private readonly DataStore _store;
     private readonly ConflictService _conflits;
+    private readonly ExportService _export;
 
     private int _modeIndex;
     private ElementChoix? _element;
     private string _resume = string.Empty;
 
-    public PlanningViewModel(DataStore store, ConflictService conflits)
+    public PlanningViewModel(DataStore store, ConflictService conflits, ExportService export)
     {
         _store = store;
         _conflits = conflits;
+        _export = export;
+        ExporterCommand = new Command(async () => await Exporter());
         _store.DonneesModifiees += (_, _) => Rafraichir();
 
         OuvrirCommand = new Command<SeanceAffichage>(async s =>
@@ -66,6 +69,32 @@ public class PlanningViewModel : BaseViewModel
     public string Resume { get => _resume; private set => SetProperty(ref _resume, value); }
 
     public ICommand OuvrirCommand { get; }
+    public ICommand ExporterCommand { get; }
+
+    private async Task Exporter()
+    {
+        const string vueHtml = "Vue affichée — page HTML (impression / PDF)";
+        const string vueCsv = "Vue affichée — CSV (Excel)";
+        const string toutCsv = "Emploi du temps complet — CSV (Excel)";
+        const string toutHtml = "Emploi du temps complet — page HTML";
+
+        var choix = await Shell.Current.DisplayActionSheet("Exporter", "Annuler", null, vueHtml, vueCsv, toutHtml, toutCsv);
+
+        try
+        {
+            switch (choix)
+            {
+                case vueHtml: await _export.ExporterHtmlAsync(TitreVue, SeancesFiltrees()); break;
+                case vueCsv: await _export.ExporterCsvAsync(TitreVue, SeancesFiltrees()); break;
+                case toutHtml: await _export.ExporterHtmlAsync("Emploi du temps complet", _store.Seances); break;
+                case toutCsv: await _export.ExporterCsvAsync("Emploi du temps complet", _store.Seances); break;
+            }
+        }
+        catch (Exception ex)
+        {
+            await AfficherMessage("Export impossible", ex.Message);
+        }
+    }
 
     /// <summary>Titre utilisé pour l'export de la vue courante.</summary>
     public string TitreVue => ElementChoisi is null ? "Emploi du temps" : $"Emploi du temps — {ElementChoisi.Libelle}";
