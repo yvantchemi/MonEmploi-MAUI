@@ -16,6 +16,10 @@ public static class MauiProgram
         builder.Services.AddSingleton<ConflictService>();
         builder.Services.AddSingleton<ExportService>();
 
+        // Tableau de bord
+        builder.Services.AddSingleton<AccueilViewModel>();
+        builder.Services.AddSingleton<AccueilPage>();
+
         // Ressources
         builder.Services.AddSingleton<SallesViewModel>();
         builder.Services.AddSingleton<SallesPage>();

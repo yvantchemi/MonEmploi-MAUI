@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MonEmploi.ViewModels"
+             x:Class="MonEmploi.Views.AccueilPage"
+             Title="MonEmploi Éducation">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12" Spacing="14">
+
+            <!-- Bandeau -->
+            <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="18" BackgroundColor="{StaticResource Primaire}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Tableau de bord" TextColor="White" FontSize="22" FontAttributes="Bold" />
+                    <Label Text="{Binding HeuresSemaine}" TextColor="#DCE8F4" />
+                    <Button Text="+ Planifier une séance" Margin="0,10,0,0" BackgroundColor="{StaticResource Accent}"
+                            TextColor="{StaticResource Texte}" Command="{Binding NouvelleSeanceCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Chiffres clés -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                <Border Style="{StaticResource Carte}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding NbSeances}" FontSize="26" FontAttributes="Bold" TextColor="{StaticResource Primaire}" />
+                        <Label Text="Séances" Style="{StaticResource TexteDiscret}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Carte}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding NbSalles}" FontSize="26" FontAttributes="Bold" TextColor="{StaticResource Primaire}" />
+                        <Label Text="Salles" Style="{StaticResource TexteDiscret}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" Style="{StaticResource Carte}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding NbEnseignants}" FontSize="26" FontAttributes="Bold" TextColor="{StaticResource Primaire}" />
+                        <Label Text="Enseignants" Style="{StaticResource TexteDiscret}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource Carte}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding NbGroupes}" FontSize="26" FontAttributes="Bold" TextColor="{StaticResource Primaire}" />
+                        <Label Text="Groupes" Style="{StaticResource TexteDiscret}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- État des conflits -->
+            <Border Style="{StaticResource Carte}" BackgroundColor="{StaticResource SuccesClair}" IsVisible="{Binding AConflits, Converter={StaticResource Inverse}}">
+                <Label Text="{Binding TexteConflits}" TextColor="{StaticResource Succes}" FontAttributes="Bold" />
+            </Border>
+            <Border Style="{StaticResource Carte}" BackgroundColor="{StaticResource DangerClair}" IsVisible="{Binding AConflits}">
+                <Label Text="{Binding TexteConflits}" TextColor="{StaticResource Danger}" FontAttributes="Bold" />
+            </Border>
+
+            <!-- Séances du jour -->
+            <Label Text="{Binding TitreJour}" Style="{StaticResource TitreSection}" />
+            <Label Text="Aucune séance prévue ce jour." Style="{StaticResource TexteDiscret}" IsVisible="{Binding AucuneSeanceAujourdhui}" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding SeancesDuJour}" Spacing="8">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource Carte}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AccueilViewModel}}, Path=OuvrirCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="6,*" ColumnSpacing="12">
+                                <BoxView Color="{Binding CouleurStatut}" CornerRadius="3" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label Text="{Binding Horaire}" FontAttributes="Bold" TextColor="{StaticResource Primaire}" />
+                                    <Label Text="{Binding Matiere}" Style="{StaticResource TitreCarte}" />
+                                    <Label Text="{Binding Participants}" Style="{StaticResource TexteDiscret}" />
+                                    <Label Text="{Binding Lieu}" Style="{StaticResource TexteDiscret}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <!-- Occupation des salles -->
+            <Label Text="Occupation des salles (semaine)" Style="{StaticResource TitreSection}" />
+            <Border Style="{StaticResource Carte}">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Occupations}" Spacing="10">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="4">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Nom}" FontAttributes="Bold" />
+                                    <Label Grid.Column="1" Text="{Binding Texte}" Style="{StaticResource TexteDiscret}" />
+                                </Grid>
+                                <ProgressBar Progress="{Binding Taux}" ProgressColor="{StaticResource Primaire}" />
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Recharger les données de démonstration" Style="{StaticResource BoutonSecondaire}"
+                    Command="{Binding ReinitialiserCommand}" Margin="0,6,0,12" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
