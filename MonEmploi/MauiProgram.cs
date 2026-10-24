@@ -22,6 +22,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<GroupesViewModel>();
         builder.Services.AddSingleton<GroupesPage>();
 
+        // Séances
+        builder.Services.AddSingleton<SeancesViewModel>();
+        builder.Services.AddSingleton<SeancesPage>();
+        builder.Services.AddTransient<SeanceEditViewModel>();
+        builder.Services.AddTransient<SeanceEditPage>();
+
         return builder.Build();
     }
 }

@@ -84,6 +84,13 @@ public class DataStore
     public Groupe? TrouverGroupe(string? id) => Groupes.FirstOrDefault(g => g.Id == id);
     public Seance? TrouverSeance(string? id) => Seances.FirstOrDefault(s => s.Id == id);
 
+    /// <summary>Transforme une séance en objet d'affichage (noms au lieu des identifiants).</summary>
+    public SeanceAffichage Decrire(Seance seance) => new(
+        seance,
+        TrouverEnseignant(seance.EnseignantId)?.NomComplet ?? "Enseignant inconnu",
+        TrouverGroupe(seance.GroupeId)?.Nom ?? "Groupe inconnu",
+        TrouverSalle(seance.SalleId)?.Nom ?? "Salle inconnue");
+
     // ---------- Salles ----------
     public void EnregistrerSalle(Salle salle) => Remplacer(Salles, salle, s => s.Id == salle.Id);
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MonEmploi.Views.SeanceEditPage"
+             Title="{Binding Titre}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12" Spacing="12">
+
+            <!-- Cours -->
+            <Border Style="{StaticResource Carte}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Cours" Style="{StaticResource TitreSection}" />
+                    <Entry Placeholder="Matière (ex. Programmation C#)" Text="{Binding Matiere}" />
+                    <Picker Title="Enseignant" ItemsSource="{Binding Enseignants}"
+                            ItemDisplayBinding="{Binding NomComplet}" SelectedItem="{Binding EnseignantChoisi}" />
+                    <Picker Title="Groupe" ItemsSource="{Binding Groupes}"
+                            ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding GroupeChoisi}" />
+                    <Picker Title="Salle" ItemsSource="{Binding Salles}"
+                            ItemDisplayBinding="{Binding Nom}" SelectedItem="{Binding SalleChoisie}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Créneau -->
+            <Border Style="{StaticResource Carte}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Créneau" Style="{StaticResource TitreSection}" />
+                    <Picker Title="Jour" ItemsSource="{Binding JoursNoms}" SelectedIndex="{Binding JourIndex}" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout>
+                            <Label Text="Début" Style="{StaticResource TexteDiscret}" />
+                            <TimePicker Time="{Binding Debut}" Format="HH:mm" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Fin" Style="{StaticResource TexteDiscret}" />
+                            <TimePicker Time="{Binding Fin}" Format="HH:mm" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Actions -->
+            <Button Text="Enregistrer la séance" Command="{Binding EnregistrerCommand}" />
+            <Button Text="Annuler" Style="{StaticResource BoutonSecondaire}" Command="{Binding AnnulerCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MonEmploi.Views.SeancesPage"
+             Title="Séances">
+
+    <Grid RowDefinitions="Auto,*" Padding="16,12" RowSpacing="6">
+
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <Label Text="{Binding Resume}" Style="{StaticResource TexteDiscret}" VerticalOptions="Center" />
+            <Button Grid.Column="1" Text="+ Nouvelle séance" Command="{Binding NouvelleCommand}" />
+        </Grid>
+
+        <CollectionView x:Name="ListeSeances" Grid.Row="1" ItemsSource="{Binding SeancesParJour}" IsGrouped="True"
+                        SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="Aucune séance. Ajoutez la première avec « + Nouvelle séance »."
+                       HorizontalOptions="Center" Margin="0,30" Style="{StaticResource TexteDiscret}" />
+            </CollectionView.EmptyView>
+
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding EnTete}" Style="{StaticResource EnTeteJour}" />
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource Carte}" Margin="0,0,0,8">
+                        <Grid ColumnDefinitions="6,*" ColumnSpacing="12">
+                            <BoxView Color="{StaticResource Accent}" CornerRadius="3" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding Horaire}" FontAttributes="Bold" TextColor="{StaticResource Primaire}" />
+                                <Label Text="{Binding Matiere}" Style="{StaticResource TitreCarte}" />
+                                <Label Text="{Binding Participants}" Style="{StaticResource TexteDiscret}" />
+                                <Label Text="{Binding Lieu}" Style="{StaticResource TexteDiscret}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
