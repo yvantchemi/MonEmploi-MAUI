@@ -1,0 +1,18 @@
+## Visual Studio / .NET
+.vs/
+.vscode/
+.idea/
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+*.rsuser
+*.DotSettings.user
+packages/
+*.apk
+*.aab
+*.msix
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       x:Class="MonEmploi.AppShell"
+       Title="MonEmploi">
+
+    <ShellContent Title="MonEmploi" Route="accueil">
+        <ContentPage Title="MonEmploi Éducation">
+            <VerticalStackLayout Padding="24" Spacing="12" VerticalOptions="Center">
+                <Label Text="MonEmploi Éducation" FontSize="26" FontAttributes="Bold" HorizontalOptions="Center" />
+                <Label Text="Planification des salles, enseignants et groupes" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </ContentPage>
+    </ShellContent>
+
+</Shell>
