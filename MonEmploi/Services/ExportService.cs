@@ -93,5 +93,11 @@ public class ExportService
     private static string H(string texte) => WebUtility.HtmlEncode(texte);
 
     private static string Csv(string valeur)
-        => valeur.Contains(';') || valeur.Contains('"') ? $"\"{valeur.Replace("\"", "\"\"")}\"" : valeur;
+    {
+        if (!valeur.Contains(';') && !valeur.Contains('"'))
+            return valeur;
+
+        var echappe = valeur.Replace("\"", "\"\"");
+        return "\"" + echappe + "\"";
+    }
 }
